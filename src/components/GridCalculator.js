@@ -3,7 +3,7 @@ import { BsX } from "react-icons/bs";
 
 function GridCalculator() {
    const [rows, setRows] = useState([
-      {itemName: "Apples", price: 4.99}, {itemName: "Pears", price: 10.99}]);
+      {itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}]);
    const [header, setHeader] = useState(["Item", "Price", "Anthony", "Jacky", "Jonathan"]);
    const [item, setItem] = useState("Roast Beef");
    const [price, setPrice] = useState("2.99");
@@ -34,18 +34,39 @@ function GridCalculator() {
 
    function handleAddRow(item, price) {
       console.log(price + " " + item);
-      if (item != "" && price != 0) {
+      if (item !== "" && price !== 0) {
          setRows(prevRows => {
-            return [...prevRows, {itemName: item, price: price}]
+            return [...prevRows, {itemName: item, price: price, count: 0}]
          })
-         // setItem("")
-         // setPrice("")
+         // setItem("") used to reset input fields
+         // setPrice("") used to reset input fields
          console.log("DEPTH")
       }
    }
 
    function testClick() {
       console.log("CLICKED")
+   }
+   
+   function testCheckedBox(event, rowIndex, colIndex) {
+
+      const myRows = rows
+      // console.log(myRows)
+      console.log(event.target.checked)
+      
+      // This accounts for the number of people that are pitching in for item, based off of the check box status
+      if (event.target.checked) {
+         myRows[rowIndex].count++
+      }
+      else {
+         myRows[rowIndex].count--
+      }
+
+      if (myRows[rowIndex].count > 0) {
+         myRows[rowIndex].splitPrice = (myRows[rowIndex].price / myRows[rowIndex].count).toFixed(2)
+      }
+      console.log(rows[rowIndex])
+      // console.log("rIdx: " + rows[rowIndex].itemName + " " + "cIdx: " + header[colIndex + 2])
    }
 
    function handleRemoveLastRow() {
@@ -55,7 +76,7 @@ function GridCalculator() {
    return ( 
       <div>
          <div className="container">
-            <button type="button" className="btn btn-primary" onClick={() => handleAddHeader("Carsonn")}>Add Person</button>
+            {/* <button type="button" className="btn btn-primary" onClick={() => handleAddHeader("Carsonn")}>Add Person</button> */}
             <div className="row bg-dark text-white text-center">
                {header.map(head => (
                   <div class="col">
@@ -64,21 +85,23 @@ function GridCalculator() {
                ))}
                <div class="col-1"/>
             </div>
-            {rows.map((row, index) => (
+            {rows.map((row, rowIndex) => (
                   <div className="row text-center">
-                     <div class="col pt-2 bg-light">
+                     <div className="col pt-2 bg-light">
                         {row.itemName}
+                        {rowIndex}
                      </div>
                      <div class="col pt-2 bg-light">
                         {row.price}
                      </div>
-                     {header.slice(2).map(item => (
-                        <div class="col pt-2 bg-light">
-                           <input type="checkbox"/>
+                     {header.slice(2).map((item, colIndex) => (
+                        <div className="col pt-2 bg-light">
+                           <input type="checkbox" onChange={(event) => testCheckedBox(event, rowIndex, colIndex)} />
+                           {colIndex}
                         </div>
                      ))}
-                     <div class="col-1 bg-light">
-                        <button type="button" class="btn btn-light" onClick={() => handleRemoveIdxRow(index)}>
+                     <div className="col-1 bg-light">
+                        <button type="button" className="btn btn-light" onClick={() => handleRemoveIdxRow(rowIndex)}>
                            <BsX/>
                         </button>
                      </div>
@@ -86,14 +109,14 @@ function GridCalculator() {
                ))}
             <div className="container-fullwidth">
                <form>
-                  <div class="row ">
+                  <div className="row ">
                      <div className="col">
                         <label for="inputItem">Item</label>
-                        <input type="text" class="form-control" value={item} placeholder="Arby's Roast Beef Sandwich" id="inputItem" onChange={e => setItem(e.target.value)}/>
+                        <input type="text" className="form-control" value={item} placeholder="Arby's Roast Beef Sandwich" id="inputItem" onChange={e => setItem(e.target.value)}/>
                      </div>
                      <div className="col">
                         <label for="inputPrice">Price</label>
-                        <input type="text" class="form-control" value={price} placeholder="2.99" id="inputPrice" onChange={e => setPrice(e.target.value)}/>
+                        <input type="text" className="form-control" value={price} placeholder="2.99" id="inputPrice" onChange={e => setPrice(e.target.value)}/>
                      </div>
                      <div className="col">
                         <button type="button" className="mt-4 btn btn-primary" onClick={() => handleAddRow(item, price)}>Add Item</button>
