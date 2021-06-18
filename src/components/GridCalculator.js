@@ -20,28 +20,19 @@ function GridCalculator() {
    const [header, setHeader] = useState(["Item", "Price", "Anthony", "Jacky", "Jonathan"]);
    const [shoppers, setShoppers] = useState(
       {
-         "Anthony": {name: "Anthony", itemList: { "Pears": true, "Apples": true }}, 
-         "Jacky": {name: "Jacky", itemList: { "Pears": true, "Apples": true }},
-         "Jonathan": {name: "Jacky", itemList: {"Apples": true }}
+         "Anthony": {name: "Anthony", itemList: {}, amountOwed: 0}, 
+         "Jacky": {name: "Jacky", itemList: {}, amountOwed: 0},
+         "Jonathan": {name: "Jacky", itemList: {}, amountOwed: 0}
       });
    const [item, setItem] = useState("Roast Beef");
    const [price, setPrice] = useState("2.99");
 
-   function handleAddRow(name) {
-      console.log(name);
-      const item = {
-         itemName: {name} }
-      setRows(prevRows => {
-         return {...prevRows, item}
-      })
-   }
-
-   function handleRemoveIdxRow(index) {
-      console.log("REMOVING INDEX " + index)
-      const myRows = rows
-      myRows.splice(index, 1)
-      console.log(myRows)
-      setRows(prevRows => ([...myRows]))
+   function handleRemoveItem(item) {
+      console.log("REmoving item " + item)
+      const newItems = {...items}      
+      delete newItems[item]
+      console.dir(newItems)
+      setItems(newItems)
    }
 
    function handleAddHeader(name) {
@@ -53,43 +44,51 @@ function GridCalculator() {
 
    function handleAddRow(item, price) {
       console.log(price + " " + item);
-      if (item !== "" && price !== 0) {
-         setRows(prevRows => {
-            return [...prevRows, {itemName: item, price: price, count: 0}]
-         })
+      if (!(item in items) && item !== "" && price !== 0) {  // Create two error messages, one for bad input, another for al;ready entered item name
+         setItems({...items, [item]: {itemName: item, price: price, count: 0}})
          // setItem("") used to reset input fields
          // setPrice("") used to reset input fields
          console.log("DEPTH")
       }
    }
-
-   function testClick() {
-      console.log("CLICKED")
-   }
    
-   function testCheckedBox(event, rowIndex, colIndex) {
-
-      const myRows = rows
-      // console.log(myRows)
-      console.log(event.target.checked)
-      
-      // This accounts for the number of people that are pitching in for item, based off of the check box status
+   // Function written as an arrow function
+   const handleCheckBox = (event, item, name) => {
       if (event.target.checked) {
-         myRows[rowIndex].count++
+         items[item]["count"] = items[item]["count"] + 1
+         const updatedShoppers = {...shoppers}
+         updatedShoppers[name]["itemList"][item] = true
+         setShoppers(updatedShoppers)
       }
       else {
-         myRows[rowIndex].count--
+         items[item]["count"] = items[item]["count"] - 1
+         const updatedShoppers = {...shoppers}
+         delete updatedShoppers[name]["itemList"][item]
+         setShoppers(updatedShoppers)
+         // shoppers[name]["itemList"][item] = false
       }
 
-      if (myRows[rowIndex].count > 0) {
-         myRows[rowIndex].splitPrice = (myRows[rowIndex].price / myRows[rowIndex].count).toFixed(2)
+      if (items[item]["count"] > 0) {
+         items[item]["splitPrice"] = (items[item]["price"] / items[item]["count"]).toFixed(2)
       }
-      console.log(rows[rowIndex])
-      // console.log("rIdx: " + rows[rowIndex].itemName + " " + "cIdx: " + header[colIndex + 2])
+
+
+      // updateCosts()
+      
+      console.log(items)
+      console.log(shoppers)
    }
 
-   function handleRemoveLastRow() {
-      setRows(rows.slice(0, -1))
+   // We do not need the constant updates, because we are adding extra side effects, and it is hard to keep track of the total for each person while still checking boxes
+   const updateCosts = () => {
+      Object.keys(shoppers).map((person, personIdx) => {
+         console.log(person)
+         console.log(shoppers[person]["itemList"])
+         Object.keys(shoppers[person]["itemList"]).map((itemName) => {
+            shoppers[person]["amountOwed"] = parseFloat(shoppers[person]["amountOwed"]) + parseFloat(items[itemName]["splitPrice"])
+         })
+      })
+
    }
 
    return ( 
@@ -108,42 +107,31 @@ function GridCalculator() {
                      {name + " " + index}
                   </div>
                ))}
-               {/* {Object.keys(shoppers).map((shopper, index) => {
-                  console.log(shoppers[shopper])
-               })} */}
                <div class="col-1"/>
             </div>
-               {/* {rows.map((row, rowIndex) => (
+               {Object.keys(items).map((item, itemIdx) => (
                   <div className="row text-center">
                      <div className="col pt-2 bg-light">
-                        {row.itemName}
-                        {rowIndex}
+                        {items[item]["itemName"]}
                      </div>
-                     <div class="col pt-2 bg-light">
-                        {row.price}
+                     <div className="col pt-2 bg-light">
+                        {items[item]["price"]}
                      </div>
-                     {header.slice(2).map((item, colIndex) => (
+                     {Object.keys(shoppers).map((person, personIdx) => (
                         <div className="col pt-2 bg-light">
-                           <input type="checkbox" onChange={(event) => testCheckedBox(event, rowIndex, colIndex)} />
-                           {colIndex}
+                           <input type="checkbox" onChange={(event) => handleCheckBox(event, item, person)} />
                         </div>
                      ))}
                      <div className="col-1 bg-light">
-                        <button type="button" className="btn btn-light" onClick={() => handleRemoveIdxRow(rowIndex)}>
+                        <button type="button" className="btn btn-light" onClick={() => handleRemoveItem(item)}>
                            <BsX/>
                         </button>
                      </div>
                   </div>
-               ))} */}
-               {Object.keys(items).map((item, index) => (
-                  <div className="row text-center">
-                     {items[item]["itemName"]}
-                  </div>
                ))}
-
             <div className="container-fullwidth">
                <form>
-                  <div className="row ">
+                  <div className="row">
                      <div className="col">
                         <label for="inputItem">Item</label>
                         <input type="text" className="form-control" value={item} placeholder="Arby's Roast Beef Sandwich" id="inputItem" onChange={e => setItem(e.target.value)}/>
@@ -155,9 +143,28 @@ function GridCalculator() {
                      <div className="col">
                         <button type="button" className="mt-4 btn btn-primary" onClick={() => handleAddRow(item, price)}>Add Item</button>
                      </div>
-                     <div className="col">
-                        <button type="button" className="mt-4 btn btn-danger" onClick={handleRemoveLastRow}>Delete Last Item</button>
-                     </div>
+                  </div>
+                  <div className="row">
+                     {Object.keys(shoppers).map((person, personIdx) => (
+                        <div className="col mt-4">
+                           <div className="row bg-dark text-white">
+                              {person}
+                           </div>
+                           {Object.keys(shoppers[person]["itemList"]).map((itemName, itemNameIdx) => (
+                              <div className="row bg-light">
+                                 <div className="col">
+                                    {itemName}
+                                 </div>
+                                 <div className="col">
+                                    {items[itemName]["splitPrice"]}
+                                 </div>
+                              </div>
+                           ))}
+                           {/* <div className="row bg-light">
+                              {shoppers[person]["amountOwed"]}
+                           </div> */}
+                        </div>
+                     ))}
                   </div>
                </form>
             </div>
