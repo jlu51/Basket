@@ -1,10 +1,29 @@
 import React, { useState } from 'react';
 import { BsX } from "react-icons/bs";
 
+const PriceSplitter = ({items, shoppers}) => {
+   return (
+      <div>
+         {shoppers.map}
+      </div>
+   )
+
+}
+
 function GridCalculator() {
-   const [rows, setRows] = useState([
-      {itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}]);
+   const [rows, setRows] = useState([{itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}]);
+   const [items, setItems] = useState(
+      {
+        "Apples": {itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, 
+        "Pears": {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}
+      });
    const [header, setHeader] = useState(["Item", "Price", "Anthony", "Jacky", "Jonathan"]);
+   const [shoppers, setShoppers] = useState(
+      {
+         "Anthony": {name: "Anthony", itemList: { "Pears": true, "Apples": true }}, 
+         "Jacky": {name: "Jacky", itemList: { "Pears": true, "Apples": true }},
+         "Jonathan": {name: "Jacky", itemList: {"Apples": true }}
+      });
    const [item, setItem] = useState("Roast Beef");
    const [price, setPrice] = useState("2.99");
 
@@ -78,14 +97,23 @@ function GridCalculator() {
          <div className="container">
             {/* <button type="button" className="btn btn-primary" onClick={() => handleAddHeader("Carsonn")}>Add Person</button> */}
             <div className="row bg-dark text-white text-center">
-               {header.map(head => (
-                  <div class="col">
-                     {head}
+               <div className="col">
+                  Item
+               </div>
+               <div className="col">
+                  Price
+               </div>
+               {Object.keys(shoppers).map((name, index) => (     // Last brace has to be reg parethn bc mapping to a JSX
+                  <div className="col">
+                     {name + " " + index}
                   </div>
                ))}
+               {/* {Object.keys(shoppers).map((shopper, index) => {
+                  console.log(shoppers[shopper])
+               })} */}
                <div class="col-1"/>
             </div>
-            {rows.map((row, rowIndex) => (
+               {/* {rows.map((row, rowIndex) => (
                   <div className="row text-center">
                      <div className="col pt-2 bg-light">
                         {row.itemName}
@@ -106,7 +134,13 @@ function GridCalculator() {
                         </button>
                      </div>
                   </div>
+               ))} */}
+               {Object.keys(items).map((item, index) => (
+                  <div className="row text-center">
+                     {items[item]["itemName"]}
+                  </div>
                ))}
+
             <div className="container-fullwidth">
                <form>
                   <div className="row ">
