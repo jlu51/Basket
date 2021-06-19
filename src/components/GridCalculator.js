@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { BsX } from "react-icons/bs";
-
-const PriceSplitter = ({items, shoppers}) => {
-   return (
-      <div>
-         {shoppers.map}
-      </div>
-   )
-
-}
+import ResultGrid from './ResultGrid';
 
 function GridCalculator() {
    const [rows, setRows] = useState([{itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}]);
@@ -17,15 +9,16 @@ function GridCalculator() {
         "Apples": {itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, 
         "Pears": {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}
       });
-   const [header, setHeader] = useState(["Item", "Price", "Anthony", "Jacky", "Jonathan"]);
+   const [header, setHeader] = useState(["Item", "Price", "Bob", "Doug", "John"]);
    const [shoppers, setShoppers] = useState(
       {
-         "Anthony": {name: "Anthony", itemList: {}, amountOwed: 0}, 
-         "Jacky": {name: "Jacky", itemList: {}, amountOwed: 0},
-         "Jonathan": {name: "Jacky", itemList: {}, amountOwed: 0}
+         "Bob": {name: "Bob", itemList: {}, amountOwed: 0}, 
+         "Doug": {name: "Doug", itemList: {}, amountOwed: 0},
+         "John": {name: "John", itemList: {}, amountOwed: 0}
       });
    const [item, setItem] = useState("Roast Beef");
    const [price, setPrice] = useState("2.99");
+   const [toggleTotals, setToggleTotals] = useState(false)
 
    function handleRemoveItem(item) {
       console.log("REmoving item " + item)
@@ -33,6 +26,9 @@ function GridCalculator() {
       delete newItems[item]
       console.dir(newItems)
       setItems(newItems)
+
+
+      setToggleTotals(false)
    }
 
    function handleAddHeader(name) {
@@ -50,6 +46,13 @@ function GridCalculator() {
          // setPrice("") used to reset input fields
          console.log("DEPTH")
       }
+   }
+
+   const handleDeleteItem = (item) => {
+      // remove from everybody's item list
+      //fix the count and splitPrice
+
+      // set the new state of items and shoppers
    }
    
    // Function written as an arrow function
@@ -72,9 +75,8 @@ function GridCalculator() {
          items[item]["splitPrice"] = (items[item]["price"] / items[item]["count"]).toFixed(2)
       }
 
-
       // updateCosts()
-      
+      setToggleTotals(false)
       console.log(items)
       console.log(shoppers)
    }
@@ -104,7 +106,7 @@ function GridCalculator() {
                </div>
                {Object.keys(shoppers).map((name, index) => (     // Last brace has to be reg parethn bc mapping to a JSX
                   <div className="col">
-                     {name + " " + index}
+                     {name}
                   </div>
                ))}
                <div class="col-1"/>
@@ -144,30 +146,9 @@ function GridCalculator() {
                         <button type="button" className="mt-4 btn btn-primary" onClick={() => handleAddRow(item, price)}>Add Item</button>
                      </div>
                   </div>
-                  <div className="row">
-                     {Object.keys(shoppers).map((person, personIdx) => (
-                        <div className="col mt-4">
-                           <div className="row bg-dark text-white">
-                              {person}
-                           </div>
-                           {Object.keys(shoppers[person]["itemList"]).map((itemName, itemNameIdx) => (
-                              <div className="row bg-light">
-                                 <div className="col">
-                                    {itemName}
-                                 </div>
-                                 <div className="col">
-                                    {items[itemName]["splitPrice"]}
-                                 </div>
-                              </div>
-                           ))}
-                           {/* <div className="row bg-light">
-                              {shoppers[person]["amountOwed"]}
-                           </div> */}
-                        </div>
-                     ))}
-                  </div>
                </form>
             </div>
+            <ResultGrid items={items} shoppers={shoppers} showTotals={toggleTotals} handleToggleTotal={setToggleTotals} />
          </div>
       </div>
    );
