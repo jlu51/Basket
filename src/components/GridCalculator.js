@@ -12,47 +12,48 @@ function GridCalculator() {
    const [header, setHeader] = useState(["Item", "Price", "Bob", "Doug", "John"]);
    const [shoppers, setShoppers] = useState(
       {
-         "Bob": {name: "Bob", itemList: {}, amountOwed: 0}, 
-         "Doug": {name: "Doug", itemList: {}, amountOwed: 0},
-         "John": {name: "John", itemList: {}, amountOwed: 0}
+         "Bob": {name: "Bob", itemList: {}}, 
+         "Doug": {name: "Doug", itemList: {}},
+         "John": {name: "John", itemList: {}}
       });
-   const [item, setItem] = useState("Roast Beef");
-   const [price, setPrice] = useState("2.99");
+   const [item, setItem] = useState("");
+   const [price, setPrice] = useState("");
    const [toggleTotals, setToggleTotals] = useState(false)
-
-   function handleRemoveItem(item) {
-      console.log("REmoving item " + item)
-      const newItems = {...items}      
-      delete newItems[item]
-      console.dir(newItems)
-      setItems(newItems)
-
-
-      setToggleTotals(false)
-   }
-
-   function handleAddHeader(name) {
-      console.log(name);
-      setHeader(prevHeader => {
-         return [...prevHeader, name]
-      })
-   }
 
    function handleAddRow(item, price) {
       console.log(price + " " + item);
       if (!(item in items) && item !== "" && price !== 0) {  // Create two error messages, one for bad input, another for al;ready entered item name
          setItems({...items, [item]: {itemName: item, price: price, count: 0}})
-         // setItem("") used to reset input fields
-         // setPrice("") used to reset input fields
+         setItem("")
+         setPrice("")
          console.log("DEPTH")
       }
    }
 
-   const handleDeleteItem = (item) => {
-      // remove from everybody's item list
-      //fix the count and splitPrice
+   const handleRemoveItem = (itemToRemove) => {
+      // remove item from everybody's item list
+      const updatedItems = {...items}
+      const updatedShoppers = {...shoppers}
+      for (var person in updatedShoppers) {
+         for (var item in updatedShoppers[person]["itemList"]) {
+            if (item == itemToRemove) {
+               console.log("MATCHED")
+               delete updatedShoppers[person]["itemList"][item]
+            }     
+         }
+      }
+      //udpate the count and splitPrice
+      for (var item in updatedItems) {
+         if (item == itemToRemove) {
+            console.log("MATCHED2")
+           delete updatedItems[item]
+         }
+      }
 
-      // set the new state of items and shoppers
+      // set the new state of items, shoppers, and hide total cost
+      setToggleTotals(false)
+      setShoppers(updatedShoppers)
+      setItems(updatedItems)
    }
    
    // Function written as an arrow function
@@ -68,14 +69,12 @@ function GridCalculator() {
          const updatedShoppers = {...shoppers}
          delete updatedShoppers[name]["itemList"][item]
          setShoppers(updatedShoppers)
-         // shoppers[name]["itemList"][item] = false
       }
 
       if (items[item]["count"] > 0) {
          items[item]["splitPrice"] = (items[item]["price"] / items[item]["count"]).toFixed(2)
       }
 
-      // updateCosts()
       setToggleTotals(false)
       console.log(items)
       console.log(shoppers)
@@ -90,7 +89,6 @@ function GridCalculator() {
             shoppers[person]["amountOwed"] = parseFloat(shoppers[person]["amountOwed"]) + parseFloat(items[itemName]["splitPrice"])
          })
       })
-
    }
 
    return ( 
@@ -148,7 +146,7 @@ function GridCalculator() {
                   </div>
                </form>
             </div>
-            <ResultGrid items={items} shoppers={shoppers} showTotals={toggleTotals} handleToggleTotal={setToggleTotals} />
+            <ResultGrid items={items} shoppers={shoppers} toggleTotals={toggleTotals} setToggleTotals={setToggleTotals} />
          </div>
       </div>
    );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const ResultGrid = ({items, shoppers, showTotals, handleToggleTotal}) => {
+const ResultGrid = ({items, shoppers, toggleTotals, setToggleTotals}) => {
 
    const [totalList, setTotalList] = useState({})
 
@@ -16,7 +16,7 @@ const ResultGrid = ({items, shoppers, showTotals, handleToggleTotal}) => {
 
       setTotalList(updatedTotalList)
       console.log(updatedTotalList)
-      handleToggleTotal(true)
+      setToggleTotals(true)
    }
 
    return (
@@ -25,14 +25,17 @@ const ResultGrid = ({items, shoppers, showTotals, handleToggleTotal}) => {
             {Object.keys(shoppers).map((person) => {
                return (
                   <>
-                     <div className="col-3 text-center">
+                     <div className="col-3">
                         <div className="row justify-content-around">
-                           <div className="col bg-dark text-white">
+                           <div className="col bg-dark text-white text-center">
                               {person}
                            </div>
-                           {Object.keys(shoppers[person]["itemList"]).map((item) => (
+                           {Object.keys(shoppers[person]["itemList"]).map((item, index) => (
                               <div className="row bg-light">
                                  <div className="col">
+                                    {index + 1}
+                                 </div>
+                                 <div className="col-7 text-center">
                                     {item}
                                  </div>
                                  <div className="col">
@@ -46,9 +49,9 @@ const ResultGrid = ({items, shoppers, showTotals, handleToggleTotal}) => {
                )})}
          </div>
 
-         {showTotals && <div className="row justify-content-around">
+         {toggleTotals && <div className="row justify-content-around">
             {Object.keys(totalList).map((name) => (
-               <div className="col-3 bg-success text-center">
+               <div className="col-3 bg-success text-white text-center">
                   <div className="row">
                      <div className="col">
                         Total
