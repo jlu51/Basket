@@ -9,12 +9,13 @@ function GridCalculator() {
         "Apples": {itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, 
         "Pears": {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}
       });
-   const [header, setHeader] = useState(["Item", "Price", "Bob", "Doug", "John"]);
+   const [header, setHeader] = useState(["Item", "Price", "Bob", "Doug", "John", "James"]);
    const [shoppers, setShoppers] = useState(
       {
          "Bob": {name: "Bob", itemList: {}}, 
          "Doug": {name: "Doug", itemList: {}},
-         "John": {name: "John", itemList: {}}
+         "John": {name: "John", itemList: {}},
+         "James": {name: "James", itemList: {}}
       });
    const [item, setItem] = useState("");
    const [price, setPrice] = useState("");
