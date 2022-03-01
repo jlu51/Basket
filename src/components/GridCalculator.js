@@ -1,22 +1,15 @@
 import React, { useState } from 'react';
-import { BsX } from "react-icons/bs";
+import { BsX, BsArrowLeft } from "react-icons/bs";
 import ResultGrid from './ResultGrid';
 
-function GridCalculator() {
-   const [rows, setRows] = useState([{itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}]);
+function GridCalculator({shoppers, setShoppers}) {
+
    const [items, setItems] = useState(
       {
         "Apples": {itemName: "Apples", price: 4.99, count: 0, splitPrice: 0}, 
         "Pears": {itemName: "Pears", price: 10.99, count: 0, splitPrice: 0}
       });
-   const [header, setHeader] = useState(["Item", "Price", "Bob", "Doug", "John", "James"]);
-   const [shoppers, setShoppers] = useState(
-      {
-         "Bob": {name: "Bob", itemList: {}}, 
-         "Doug": {name: "Doug", itemList: {}},
-         "John": {name: "John", itemList: {}},
-         "James": {name: "James", itemList: {}}
-      });
+  
    const [item, setItem] = useState("");
    const [price, setPrice] = useState("");
    const [toggleTotals, setToggleTotals] = useState(false)
@@ -95,6 +88,8 @@ function GridCalculator() {
    return ( 
       <div>
          <div className="container">
+            <div className="col">
+            </div>
             {/* <button type="button" className="btn btn-primary" onClick={() => handleAddHeader("Carsonn")}>Add Person</button> */}
             <div className="row bg-dark text-white text-center">
                <div className="col">
